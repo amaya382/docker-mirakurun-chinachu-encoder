@@ -1,0 +1,5 @@
+#!/bin/sh -eux
+
+cd $DUMP_SITE && rm -rf `ls -tr | head -2`
+
+exit 0

@@ -1,0 +1,11 @@
+#!/bin/sh -eux
+
+[ -f $CONF_DIR/channels.yml ] || cp $TURNOUT/channels.yml $CONF_DIR
+[ -f $CONF_DIR/tuners.yml ] || cp $TURNOUT/tuners.yml $CONF_DIR
+[ -f $CONF_DIR/server.yml ] || cp $TURNOUT/server.yml $CONF_DIR
+
+rm -f /run/pcscd/pcscd.comm
+
+pcscd -f --error &
+mirakurun start
+mirakurun log server

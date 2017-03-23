@@ -1,0 +1,28 @@
+version: '2'
+services:
+  mirakurun:
+    image: amaya382/mirakurun:latest
+    container_name: mirakurun
+    privileged: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mirakurun/etc/:/usr/local/etc/mirakurun/
+      - ./mirakurun/db/:/usr/local/var/db/mirakurun/
+    restart: always
+
+  chinachu:
+    image: amaya382/chinachu:latest
+    container_name: chinachu
+    ports:
+      - "20772:20772"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./recorded/:/usr/local/chinachu/recorded/
+      - ./chinachu/config.json:/usr/local/chinachu/config.json
+      - ./chinachu/rules.json:/usr/local/chinachu/rules.json
+      - ./chinachu/data/:/usr/local/chinachu/data/
+      - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
+      - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro
+    links:
+      - mirakurun
+    restart: always

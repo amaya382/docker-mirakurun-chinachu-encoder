@@ -1,0 +1,29 @@
+#!/bin/sh -eux
+
+[ -s config.json ] || cat turnout/config.json > config.json
+[ -s rules.json ] || cat turnout/rules.json > rules.json
+
+rm -f /var/run/chinachu-operator.pid
+rm -f /var/run/chinachu-wui.pid
+
+retry_limit=300
+n_retries=0
+while [ $n_retries -le $retry_limit ]
+do
+	http_status=`curl -s mirakurun:40772/api/status -o /dev/null -w '%{http_code}'; :`
+	if [ "$http_status" = "200" ]; then
+		n_retries=0
+		echo "succeeded in connecting with mirakurun"
+		break
+	fi
+  n_retries=$(($n_retries + 1))
+	echo "waiting for mirakurun...(${n_retries}sec)"
+	sleep 1
+done
+
+[ $n_retries -ge $retry_limit ] && echo "mirakurun timed out"
+
+/etc/init.d/chinachu-operator start
+/etc/init.d/chinachu-wui start
+
+tail -f /dev/null
