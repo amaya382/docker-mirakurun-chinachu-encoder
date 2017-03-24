@@ -43,7 +43,7 @@ RUN set -eux \
 	&& echo 1 | ./chinachu installer \
 	&& mkdir turnout \
 	&& cat config.sample.json | \
-		jq ".mirakurunPath = \"http://mirakurun:40772/\" | .recordedDir = \"$RECORDED_DIR\" |.storageLowSpaceAction = \"none\" | .storageLowSpaceCommand = \"$SCRIPT_DIR/storage_low_space_command\" | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \
+		jq ".mirakurunPath = \"http://mirakurun:40772/\" | .recordedDir = \"$RECORDED_DIR/\" | .storageLowSpaceAction = \"none\" | .storageLowSpaceCommand = \"$SCRIPT_DIR/storage_low_space_command\" | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \
 		> turnout/config.json \
 	&& echo [] > turnout/rules.json \
 	&& rm *.sample.json \
