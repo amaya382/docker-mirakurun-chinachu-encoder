@@ -2,8 +2,7 @@
 
 [公式のリポジトリ](https://github.com/Chinachu/docker-mirakurun-chinachu) をベースに, より軽量に, 更に録画後エンコード機能をデフォルトで内蔵
 
-> mirakurun 82.6MB -> 68.7MB
-
+> mirakurun 82.6MB -> 68.7MB  
 > chinachu 641MB -> 467MB
 
 
@@ -11,7 +10,7 @@
 ### Mirakurun
 * Alpine Linux 3.5
 * [Mirakurun](https://github.com/kanreisa/Mirakurun)
-  * branch: master
+  * branch: master (v2.2.0)
 
 ### Chinachu
 * Alpine Linux 3.5
@@ -76,6 +75,7 @@ docker-compose down
 #### 2. チューナ設定
 ```shell
 docker exec -it mirakurun mirakurun config tuners
+docker exec mirakurun mirakurun restart
 ```
 以下PT3の例
 ```yml
@@ -113,7 +113,7 @@ docker exec -it mirakurun mirakurun config tuners
 #### 3. チャンネル設定
 自動チャンネルスキャンを行う
 ```shell
-docker exec mirakurun curl -X PUT 'http://localhost:40772/api/config/channels/scan'
+docker exec chinachu curl -X PUT 'http://mirakurun:40772/api/config/channels/scan'
 ```
 ただし地上波のみなので (v2.2.0現在), BS・CSを利用する場合は以下のコマンドから手動で設定する
 ```shell
@@ -125,6 +125,7 @@ docker exec -it mirakurun mirakurun config channels
 * WUI (w/ Basic認証), ユーザ名/パスワード (デフォルトは認証なし)
 * 録画ファイル名フォーマット  
 エンコード後もこのファイル名を引き継ぐため, 拡張子は `*.mp4` を推奨
+* `mirakurunPath`, `recordedDir`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. `recordedDir` は `runtime/docker-compose.yml` 内の `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
 * etc.
 
 #### 5. エンコード設定
@@ -138,7 +139,7 @@ docker-compose down && docker-compose up -d
 
 
 ### Others
-* 各種設定ファイルは `runtime/` 下に永続化される
+* 各種設定ファイルはホストの `runtime/` 下に永続化される
 * アップデートはイメージ単位で行うことを想定 (`chinachu updater` は利用できない)
 * エンコード元のTSファイルは `recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている.
 
