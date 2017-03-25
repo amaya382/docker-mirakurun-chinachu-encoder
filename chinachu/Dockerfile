@@ -12,6 +12,7 @@ ENV DUMP_SITE="$RECORDED_DIR/dump"
 
 WORKDIR $CHINACHU_HOME
 
+COPY chinachu-mp4.patch $SCRIPT_DIR
 COPY service $SCRIPT_DIR
 
 RUN set -eux \
@@ -22,6 +23,7 @@ RUN set -eux \
 		coreutils \
 		procps \
 		ca-certificates \
+		jq \
 	\
 	&& apk add --no-cache --virtual .build-deps \
 		git \
@@ -37,10 +39,11 @@ RUN set -eux \
 		musl-dev \
 		eudev-dev \
 		libevent-dev \
-		jq \
 	&& git clone -b $BRANCH --single-branch $REPOSITORY $CHINACHU_HOME \
 	&& cd $CHINACHU_HOME \
 	&& echo 1 | ./chinachu installer \
+	&& patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch \
+	&& rm $SCRIPT_DIR/chinachu-mp4.patch \
 	&& mkdir turnout \
 	&& cat config.sample.json | \
 		jq ".mirakurunPath = \"http://mirakurun:40772/\" | .recordedDir = \"$RECORDED_DIR/\" | .storageLowSpaceAction = \"none\" | .storageLowSpaceCommand = \"$SCRIPT_DIR/storage_low_space_command\" | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \

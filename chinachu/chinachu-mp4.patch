@@ -1,0 +1,53 @@
+diff --git a/api/script-recorded-program-preview.vm.js b/api/script-recorded-program-preview.vm.js
+index b6a8200..59856dd 100644
+--- a/api/script-recorded-program-preview.vm.js
++++ b/api/script-recorded-program-preview.vm.js
+@@ -44,7 +44,7 @@
+ 	
+ 	var ffmpeg = child_process.exec(
+ 		(
+-			'ffmpeg -f mpegts -ss ' + pos + ' -r 10 -i "' + program.recorded + '" -ss 1.5 -r 10 -frames:v 1' +
++			'ffmpeg -ss ' + pos + ' -r 10 -i "' + program.recorded + '" -ss 1.5 -r 10 -frames:v 1' +
+ 			' -c:v ' + vcodec + ' -an -f image2 -s ' + width + 'x' + height + ' -map 0:0 -y pipe:1'
+ 		)
+ 		,
+diff --git a/api/script-recorded-program-watch.vm.js b/api/script-recorded-program-watch.vm.js
+index d69aae4..9fa78db 100644
+--- a/api/script-recorded-program-watch.vm.js
++++ b/api/script-recorded-program-watch.vm.js
+@@ -183,7 +183,7 @@ function main(avinfo) {
+ 
+ 			if (!request.query.debug) args.push('-v', '0');
+ 
+-			args.push('-i', 'pipe:0');
++			args.push('-i', program.recorded);
+ 
+ 			if (d.t) { args.push('-t', d.t); }
+ 
+@@ -224,13 +224,11 @@ function main(avinfo) {
+ 
+ 			args.push('-y', '-f', d.f, 'pipe:1');
+ 
+-			var readStream = fs.createReadStream(program.recorded, range || {});
+-
+-			request.on('close', function() {
+-				readStream.destroy();
+-			});
+-
+ 			if (d['c:v'] === 'copy' && d['c:a'] === 'copy' && !d.t) {
++				var readStream = fs.createReadStream(program.recorded, range || {});
++				request.on('close', function() {
++					readStream.destroy();
++				});
+ 				readStream.pipe(response);
+ 			} else {
+ 				var ffmpeg = child_process.spawn('ffmpeg', args);
+@@ -239,8 +237,6 @@ function main(avinfo) {
+ 
+ 				ffmpeg.stdout.pipe(response);
+ 
+-				readStream.pipe(ffmpeg.stdin);
+-
+ 				ffmpeg.stderr.on('data', function(d) {
+ 					util.log('#ffmpeg: ' + d);
+ 				});
