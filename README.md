@@ -1,9 +1,10 @@
 # docker-mirakurun-chinachu-encoder
 
-[公式のリポジトリ](https://github.com/Chinachu/docker-mirakurun-chinachu) をベースに, より軽量に, 更に録画後エンコード機能をデフォルトで内蔵
+[公式実装](https://github.com/Chinachu/docker-mirakurun-chinachu) をベースに, より軽量に, 更に録画後エンコード機能をデフォルトで内蔵
 
+Raw size
 > mirakurun 82.6MB -> 68.7MB  
-> chinachu 641MB -> 467MB
+> chinachu 641MB -> 468MB
 
 
 ## Contents
@@ -29,11 +30,12 @@
 * Docker Compose: 1.8.1
 
 
-## Prerequisites
+## Prerequisites (ホスト)
 * Docker環境
   * `Docker Engine 1.10+`
   * `Docker Compose 1.6+`
-* Tuner Driver
+* SELinux無効化
+* Tuner / Tuner Driver
   * 以下PT3の例  
 ```shell
 sudo sh -c "echo \"blacklist earth-pt3\" >> /etc/modprobe.d/blacklist.conf"
@@ -44,7 +46,7 @@ sudo make install
 sudo $SHELL ./dkms.install
 # sudo reboot
 ```
-* SELinux無効化
+* Card Reader
 * [OPT] ホストでpcscdを動かしている場合は停止する  
 ```shell
 sudo systemctl stop pcscd.socket
@@ -61,7 +63,7 @@ docker-compose down
 ```
 
 ### 初期設定
-全てホストから設定する
+全てホストから設定する. 別環境で利用していた設定がある場合でも, 本プロジェクト既定の設定があるため以下の手順で設定を行う.
 
 #### 1. コンテナ設定
 `runtime/docker-compose.yml` を調整する
@@ -124,7 +126,7 @@ docker exec -it mirakurun mirakurun config channels
 適宜WebUI (http://localhost:20772) から行う
 * WUI (w/ Basic認証), ユーザ名/パスワード (デフォルトは認証なし)
 * 録画ファイル名フォーマット  
-エンコード後もこのファイル名を引き継ぐため, 拡張子は `*.mp4` を推奨
+ここではTSファイルのフォーマットを指定する. デフォルトでは自動エンコード後に `*.mp4` に置き換えられる.
 * `mirakurunPath`, `recordedDir`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. `recordedDir` は `runtime/docker-compose.yml` 内の `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
 * etc.
 
@@ -149,4 +151,4 @@ See [Issues](https://github.com/amaya382/docker-mirakurun-chinachu-encoder/issue
 
 
 ### Acknowledgements
-本リポジトリは [Chinachu/docker-mirakurun-chinachu](https://github.com/Chinachu/docker-mirakurun-chinachu) を元に作られています
+本プロジェクトは [Chinachu/docker-mirakurun-chinachu](https://github.com/Chinachu/docker-mirakurun-chinachu) を元に作られています
