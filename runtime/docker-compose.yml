@@ -3,7 +3,15 @@ services:
   mirakurun:
     image: amaya382/mirakurun:latest
     container_name: mirakurun
-    privileged: true
+    cap_add:
+      - SYS_NICE
+      - SYS_ADMIN
+    devices:
+      #- /dev/pt3video0
+      #- /dev/pt3video1
+      #- /dev/pt3video2
+      #- /dev/pt3video3
+      #- /dev/bus/usb/00x/00x
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./mirakurun/etc/:/usr/local/etc/mirakurun/

@@ -67,6 +67,10 @@ docker-compose down
 
 #### 1. コンテナ設定
 `runtime/docker-compose.yml` を調整する
+* Tunerデバイス  
+`mirakurun > devices`
+* CardReaderデバイス (`lsusb` 等で特定する. **物理ポートを変更するとここの設定も変わるので注意**)  
+`mirakurun > devices`
 * 録画ファイルの保存先  
 `chinachu > volumes > recorded`
 * chinachu WebUIのポートバインド  
