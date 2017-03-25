@@ -52,8 +52,7 @@ RUN set -eux \
 	&& chmod +x /etc/init.d/* \
 	\
 	&& apk del --purge .build-deps \
-	&& npm cache clean \
-	&& rm -rf .git
+	&& rm -rf .git ~/.npm
 
 EXPOSE 20772
 

@@ -68,7 +68,7 @@ RUN set -eux \
 	\
 	&& apk del --purge .build-deps \
 	&& npm cache clean \
-	&& rm -rf /tmp/*
+	&& rm -rf /tmp/* ~/.npm
 
 EXPOSE 40772
 
