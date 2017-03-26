@@ -130,7 +130,7 @@ docker exec -it mirakurun mirakurun config channels
 適宜WebUI (http://localhost:20772) から行う
 * WUI (w/ Basic認証), ユーザ名/パスワード (デフォルトは認証なし)
 * 録画ファイル名フォーマット  
-ここではTSファイルのフォーマットを指定する. デフォルトでは自動エンコード後に `*.mp4` に置き換えられる.
+ここではTSファイルのフォーマットを指定する. 拡張子は `*.m2ts` から **変更しない** こと. デフォルトでは自動エンコード後に `*.mp4` に置き換えられる.
 * `mirakurunPath`, `recordedDir`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. `recordedDir` は `runtime/docker-compose.yml` 内の `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
 * etc.
 
@@ -147,7 +147,8 @@ docker-compose down && docker-compose up -d
 ### Others
 * 各種設定ファイルはホストの `runtime/` 下に永続化される
 * アップデートはイメージ単位で行うことを想定 (`chinachu updater` は利用できない)
-* エンコード元のTSファイルは `recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている.
+* エンコード元のTSファイルは `runtime/recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている.
+* エンコードに途中で失敗した場合, コンテナ再起動時に自動的に再試行される
 
 
 ### Bugs / Future Works
