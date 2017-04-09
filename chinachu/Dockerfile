@@ -3,7 +3,7 @@ FROM alpine:3.5
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
 ARG REPOSITORY='https://github.com/Chinachu/Chinachu.git'
-ARG BRANCH='gamma'
+ARG COMMIT='c313f3daa3824bcff65083db1b7540b9a4492a30'
 
 ENV CHINACHU_HOME='/usr/local/chinachu'
 ENV SCRIPT_DIR='/usr/local/bin'
@@ -39,7 +39,8 @@ RUN set -eux \
 		musl-dev \
 		eudev-dev \
 		libevent-dev \
-	&& git clone -b $BRANCH --single-branch $REPOSITORY $CHINACHU_HOME \
+	&& git clone $REPOSITORY $CHINACHU_HOME \
+	&& git checkout $COMMIT \
 	&& cd $CHINACHU_HOME \
 	&& echo 1 | ./chinachu installer \
 	&& patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch \
