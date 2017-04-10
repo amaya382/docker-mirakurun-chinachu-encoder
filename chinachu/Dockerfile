@@ -3,8 +3,10 @@ FROM alpine:3.5
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
 ARG REPOSITORY='https://github.com/Chinachu/Chinachu.git'
-ARG BRANCH='gamma'
+ARG COMMIT='f1a825439f29341da805cbe7a1f01fd81777fad1'
+ARG FFMPEG_VERSION='3.2.4'
 
+ENV CHINACHU_UID=1000
 ENV CHINACHU_HOME='/usr/local/chinachu'
 ENV SCRIPT_DIR='/usr/local/bin'
 ENV RECORDED_DIR="$CHINACHU_HOME/recorded"
@@ -17,45 +19,95 @@ COPY service $SCRIPT_DIR
 
 RUN set -eux && \
     apk add --no-cache \
-        bash \
-        curl \
-        nodejs \
-        coreutils \
-        procps \
-        ca-certificates \
-        jq && \
-    \
+      bash \
+      curl \
+      nodejs \
+      coreutils \
+      procps \
+      ca-certificates \
+      jq \
+      \
+      libva \
+      libva-intel-driver \
+      zlib-dev \
+      yasm-dev \
+      lame-dev \
+      libva-dev \
+      libogg-dev \
+      libvpx-dev \
+      libvorbis-dev \
+      x264-dev \
+      x265-dev \
+      freetype-dev \
+      libass-dev \
+      libwebp-dev \
+      rtmpdump-dev \
+      libtheora-dev \
+      opus-dev && \
     apk add --no-cache --virtual .build-deps \
-        git \
-        make \
-        gcc \
-        g++ \
-        autoconf \
-        automake \
-        wget \
-        tar \
-        xz \
-        libc-dev \
-        musl-dev \
-        eudev-dev \
-        libevent-dev && \
-    git clone -b $BRANCH --single-branch $REPOSITORY $CHINACHU_HOME && \
+      build-base \
+      git \
+      autoconf \
+      automake \
+      xz \
+      musl-dev \
+      eudev-dev \
+      libevent-dev \
+      nasm \
+      bzip2 && \
+    adduser -D -u $CHINACHU_UID -h $CHINACHU_HOME chinachu && \
+    git clone $REPOSITORY $CHINACHU_HOME && \
+    git checkout $COMMIT && \
     cd $CHINACHU_HOME && \
-    echo 1 | ./chinachu installer && \
     patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch && \
-    rm $SCRIPT_DIR/chinachu-mp4.patch && \
+    echo 1 | ./chinachu installer && \
     mkdir turnout && \
     cat config.sample.json | \
-        jq ".mirakurunPath = \"http://mirakurun:40772/\" | .recordedDir = \"$RECORDED_DIR/\" | .storageLowSpaceAction = \"none\" | .storageLowSpaceCommand = \"$SCRIPT_DIR/storage_low_space_command\" | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \
-        > turnout/config.json && \
+      jq ".uid = $CHINACHU_UID \
+        | .mirakurunPath = \"http://mirakurun:40772/\" \
+        | .recordedDir = \"$RECORDED_DIR/\" \
+        | .storageLowSpaceAction = \"none\" \
+        | .storageLowSpaceCommand = \"$SCRIPT_DIR/storage_low_space_command\" \
+        | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \
+      > turnout/config.json && \
     echo [] > turnout/rules.json && \
-    rm *.sample.json && \
-    ./chinachu service operator initscript > /etc/init.d/chinachu-operator && \
-    ./chinachu service wui initscript > /etc/init.d/chinachu-wui && \
+    rm $SCRIPT_DIR/chinachu-mp4.patch *.sample.json && \
+    chown chinachu. -R $CHINACHU_HOME && \
+    ./chinachu service operator initscript | sed -e "s/^USER=.*$/USER=$CHINACHU_UID/" > /etc/init.d/chinachu-operator && \
+    ./chinachu service wui initscript | sed -e "s/^USER=.*$/USER=$CHINACHU_UID/" > /etc/init.d/chinachu-wui && \
     chmod +x /etc/init.d/* && \
     \
+    rm -rf usr/bin/* usr/src/* && \
+    wget http://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.gz -O - \
+      | tar xz && \
+    cd ffmpeg-$FFMPEG_VERSION && \
+    ./configure \
+      --enable-version3 \
+      --enable-gpl \
+      --enable-nonfree \
+      --enable-small \
+      --enable-libmp3lame \
+      --enable-libx264 \
+      --enable-libx265 \
+      --enable-libvpx \
+      --enable-libtheora \
+      --enable-libvorbis \
+      --enable-libopus \
+      --enable-libass \
+      --enable-libwebp \
+      --enable-librtmp \
+      --enable-postproc \
+      --enable-avresample \
+      --enable-libfreetype \
+      --disable-debug \
+      --disable-doc && \
+    make && \
+    make install && \
+    make distclean && \
+    cd .. && \
+    \
     apk del --purge .build-deps && \
-    rm -rf .git ~/.npm
+    rm -rf ffmpeg-$FFMPEG_VERSION .git ~/.npm
 
 EXPOSE 20772
 

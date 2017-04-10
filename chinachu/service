@@ -2,8 +2,23 @@
 
 [ -s config.json ] || cat turnout/config.json > config.json
 [ -s rules.json ] || cat turnout/rules.json > rules.json
+chown $CHINACHU_UID *.json data/*.json || :
 
-find $RECORDED_DIR -name "*.tmp.mp4" -print | xargs -i sh -c 'tmp={} && raw=${tmp%.tmp.mp4}.m2ts && recorded_command $raw'
+VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
+: ${VAAPI_ENABLED:=false}
+
+$VAAPI_ENABLED && [ "$VIDEO_GID" = "" ] \
+  && echo 'ERROR: VA-API is enabled, but VA-API device was not found' && exit 1
+
+cat config.json \
+  | jq ".gid = ${VIDEO_GID:-$CHINACHU_UID} \
+    | .vaapiEnabled = $VAAPI_ENABLED \
+    | .vaapiDevice = \"$VAAPI_DEVICE\"" > config.json_
+cat config.json_ > config.json
+rm config.json_
+
+find $RECORDED_DIR -name "*.tmp.mp4" -print \
+  | xargs -i sh -c 'tmp={} && raw=${tmp%.tmp.mp4}.m2ts && recorded_command $raw'
 
 rm -f /var/run/chinachu-operator.pid
 rm -f /var/run/chinachu-wui.pid

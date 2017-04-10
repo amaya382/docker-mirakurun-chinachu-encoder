@@ -4,7 +4,7 @@
 
 Raw size
 > mirakurun 82.6MB -> 68.7MB  
-> chinachu 641MB -> 468MB
+> chinachu 641MB -> 469MB
 
 
 ## Contents
@@ -23,6 +23,7 @@ Raw size
 
 
 ## Test Environment
+* CPU: i3-2100T
 * OS: Ubuntu 16.04.2
 * Tuner: PT3
 * Card Reader: SCR3310-NTTCom
@@ -52,6 +53,7 @@ sudo $SHELL ./dkms.install
 sudo systemctl stop pcscd.socket
 sudo systemctl disable pcscd.socket
 ```
+* [OPT] VA-API Driver
 
 
 ## Usage
@@ -67,16 +69,20 @@ docker-compose down
 
 #### 1. コンテナ設定
 `runtime/docker-compose.yml` を調整する
-* Tunerデバイス  
-`mirakurun > devices`
-* CardReaderデバイス (`lsusb` 等で特定する. **物理ポートを変更するとここの設定も変わるので注意**)  
-`mirakurun > devices`
-* 録画ファイルの保存先  
-`chinachu > volumes > recorded`
-* chinachu WebUIのポートバインド  
-`chinachu > ports`
-* デーモン化  
-`* > restart`
+* Tunerデバイス
+  * `mirakurun > devices`
+* CardReaderデバイス (`lsusb` 等で特定する. **物理ポートを変更するとここの設定も変わるので注意**)
+  * `mirakurun > devices`
+* 録画ファイルの保存先
+  * `chinachu > volumes > recorded`
+* Chinachu WebUIのポートバインド
+  * `chinachu > ports`
+* [OPT] Chinachu VA-API
+  * `chinachu > devices`
+  * `chinachu > environment > VAAPI_ENABLED`
+  * `chinachu > environment > VAAPI_DEVICE`
+* デーモン化
+  * `* > restart`
 
 #### 2. チューナ設定
 ```shell
@@ -131,7 +137,7 @@ docker exec -it mirakurun mirakurun config channels
 * WUI (w/ Basic認証), ユーザ名/パスワード (デフォルトは認証なし)
 * 録画ファイル名フォーマット  
 ここではTSファイルのフォーマットを指定する. 拡張子は `*.m2ts` から **変更しない** こと. デフォルトでは自動エンコード後に `*.mp4` に置き換えられる.
-* `mirakurunPath`, `recordedDir`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. `recordedDir` は `runtime/docker-compose.yml` 内の `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
+* `uid`, `gid`, `mirakurunPath`, `recordedDir`, `vaapiEnabled`, `vaapiDevice`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. VA-API関係は `runtime/docker-compose.yml` 内のデバイスと環境変数の項目で, `recordedDir` は `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
 * etc.
 
 #### 5. エンコード設定

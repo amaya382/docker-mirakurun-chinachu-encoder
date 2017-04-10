@@ -12,19 +12,19 @@ index b6a8200..59856dd 100644
  		)
  		,
 diff --git a/api/script-recorded-program-watch.vm.js b/api/script-recorded-program-watch.vm.js
-index d69aae4..9fa78db 100644
+index 5bc2156..5090418 100644
 --- a/api/script-recorded-program-watch.vm.js
 +++ b/api/script-recorded-program-watch.vm.js
-@@ -183,7 +183,7 @@ function main(avinfo) {
- 
- 			if (!request.query.debug) args.push('-v', '0');
+@@ -190,7 +190,7 @@ function main(avinfo) {
+ 				args.push("-hwaccel_output_format", "yuv420p");
+ 			}
  
 -			args.push('-i', 'pipe:0');
 +			args.push('-i', program.recorded);
  
  			if (d.t) { args.push('-t', d.t); }
  
-@@ -224,13 +224,11 @@ function main(avinfo) {
+@@ -262,13 +262,11 @@ function main(avinfo) {
  
  			args.push('-y', '-f', d.f, 'pipe:1');
  
@@ -42,7 +42,7 @@ index d69aae4..9fa78db 100644
  				readStream.pipe(response);
  			} else {
  				var ffmpeg = child_process.spawn('ffmpeg', args);
-@@ -239,8 +237,6 @@ function main(avinfo) {
+@@ -277,8 +275,6 @@ function main(avinfo) {
  
  				ffmpeg.stdout.pipe(response);
  

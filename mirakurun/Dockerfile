@@ -10,29 +10,29 @@ COPY service $SCRIPT_DIR
 
 RUN set -eux && \
     apk add --no-cache \
-        bash \
-        nodejs \
-        coreutils \
-        libusb \
-        pcsc-lite \
-        pcsc-lite-libs \
-        ca-certificates && \
+      bash \
+      nodejs \
+      coreutils \
+      libusb \
+      pcsc-lite \
+      pcsc-lite-libs \
+      ca-certificates && \
     \
     apk add --no-cache --virtual .build-deps \
-        curl \
-        git \
-        make \
-        gcc \
-        g++ \
-        gzip \
-        autoconf \
-        automake \
-        libc-dev \
-        musl-dev \
-        eudev-dev \
-        libevent-dev \
-        pcsc-lite-dev \
-        libusb-dev && \
+      curl \
+      git \
+      make \
+      gcc \
+      g++ \
+      gzip \
+      autoconf \
+      automake \
+      libc-dev \
+      musl-dev \
+      eudev-dev \
+      libevent-dev \
+      pcsc-lite-dev \
+      libusb-dev && \
     \
     npm install pm2 -g && \
     npm install arib-b25-stream-test -g --unsafe && \
