@@ -2,9 +2,10 @@ FROM alpine:3.5
 
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
-ARG REPOSITORY='https://github.com/Chinachu/Chinachu.git'
-ARG COMMIT='f1a825439f29341da805cbe7a1f01fd81777fad1'
-ARG FFMPEG_VERSION='3.2.4'
+ARG CHINACHU_REPOSITORY='https://github.com/Chinachu/Chinachu.git'
+ARG CHINACHU_COMMIT='f1a825439f29341da805cbe7a1f01fd81777fad1'
+ARG FFMPEG_REPOSITORY='https://github.com/FFmpeg/FFmpeg.git'
+ARG FFMPEG_COMMIT='27ebdcf079ed54d294db010e9f50700f75ed5e3d'
 
 ENV CHINACHU_UID=1000
 ENV CHINACHU_HOME='/usr/local/chinachu'
@@ -56,14 +57,13 @@ RUN set -eux && \
       nasm \
       bzip2 && \
     adduser -D -u $CHINACHU_UID -h $CHINACHU_HOME chinachu && \
-    git clone $REPOSITORY $CHINACHU_HOME && \
-    git checkout $COMMIT && \
-    cd $CHINACHU_HOME && \
+    git clone $CHINACHU_REPOSITORY $CHINACHU_HOME && \
+    git checkout $CHINACHU_COMMIT && \
     patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch && \
     echo 1 | ./chinachu installer && \
     mkdir turnout && \
     cat config.sample.json | \
-      jq ".uid = $CHINACHU_UID \
+      jq ".uid = \"chinachu\" \
         | .mirakurunPath = \"http://mirakurun:40772/\" \
         | .recordedDir = \"$RECORDED_DIR/\" \
         | .storageLowSpaceAction = \"none\" \
@@ -73,14 +73,14 @@ RUN set -eux && \
     echo [] > turnout/rules.json && \
     rm $SCRIPT_DIR/chinachu-mp4.patch *.sample.json && \
     chown chinachu. -R $CHINACHU_HOME && \
-    ./chinachu service operator initscript | sed -e "s/^USER=.*$/USER=$CHINACHU_UID/" > /etc/init.d/chinachu-operator && \
-    ./chinachu service wui initscript | sed -e "s/^USER=.*$/USER=$CHINACHU_UID/" > /etc/init.d/chinachu-wui && \
+    ./chinachu service operator initscript | sed -e "s/^USER=.*$/USER=chinachu/" > /etc/init.d/chinachu-operator && \
+    ./chinachu service wui initscript | sed -e "s/^USER=.*$/USER=chinachu/" > /etc/init.d/chinachu-wui && \
     chmod +x /etc/init.d/* && \
     \
     rm -rf usr/bin/* usr/src/* && \
-    wget http://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.gz -O - \
-      | tar xz && \
-    cd ffmpeg-$FFMPEG_VERSION && \
+    git clone $FFMPEG_REPOSITORY ffmpeg && \
+    cd ffmpeg && \
+    git checkout $FFMPEG_COMMIT && \
     ./configure \
       --enable-version3 \
       --enable-gpl \
@@ -103,11 +103,10 @@ RUN set -eux && \
       --disable-doc && \
     make && \
     make install && \
-    make distclean && \
     cd .. && \
     \
     apk del --purge .build-deps && \
-    rm -rf ffmpeg-$FFMPEG_VERSION .git ~/.npm
+    rm -rf ffmpeg .git ~/.npm
 
 EXPOSE 20772
 

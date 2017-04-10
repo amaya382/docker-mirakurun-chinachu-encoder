@@ -7,12 +7,19 @@ chown $CHINACHU_UID *.json data/*.json || :
 VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
 : ${VAAPI_ENABLED:=false}
 
-$VAAPI_ENABLED && [ "$VIDEO_GID" = "" ] \
-  && echo 'ERROR: VA-API is enabled, but VA-API device was not found' && exit 1
+if $VAAPI_ENABLED; then
+  if [ "$VIDEO_GID" = "" ]; then
+    echo 'ERROR: VA-API is enabled, but VA-API device was not found'
+    exit 1
+  else
+    delgroup video || :
+    addgroup -g $VIDEO_GID video
+    addgroup chinachu video
+  fi
+fi
 
 cat config.json \
-  | jq ".gid = ${VIDEO_GID:-$CHINACHU_UID} \
-    | .vaapiEnabled = $VAAPI_ENABLED \
+  | jq ".vaapiEnabled = $VAAPI_ENABLED \
     | .vaapiDevice = \"$VAAPI_DEVICE\"" > config.json_
 cat config.json_ > config.json
 rm config.json_
