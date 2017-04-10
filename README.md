@@ -3,8 +3,8 @@
 [公式実装](https://github.com/Chinachu/docker-mirakurun-chinachu) をベースに, より軽量に, 更に録画後エンコード機能をデフォルトで内蔵
 
 Raw size
-> mirakurun 82.6MB -> 68.7MB  
-> chinachu 641MB -> 469MB
+> mirakurun 82.6MB -> 69MB  
+> chinachu 641MB -> 471MB
 
 
 ## Contents
@@ -137,8 +137,10 @@ docker exec -it mirakurun mirakurun config channels
 * WUI (w/ Basic認証), ユーザ名/パスワード (デフォルトは認証なし)
 * 録画ファイル名フォーマット  
 ここではTSファイルのフォーマットを指定する. 拡張子は `*.m2ts` から **変更しない** こと. デフォルトでは自動エンコード後に `*.mp4` に置き換えられる.
-* `uid`, `gid`, `mirakurunPath`, `recordedDir`, `vaapiEnabled`, `vaapiDevice`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと. VA-API関係は `runtime/docker-compose.yml` 内のデバイスと環境変数の項目で, `recordedDir` は `/usr/local/chinachu/recorded` に対応するホスト側マウントパスで, `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を編集する.
-* etc.
+* `uid`, `gid`, `mirakurunPath`, `recordedDir`, `vaapiEnabled`, `vaapiDevice`, `storageLowSpaceCommand`, `recordedCommand` は **変更しない** こと
+  * VA-API関係は `runtime/docker-compose.yml` 内のデバイスと環境変数の項目
+  * `recordedDir` は `/usr/local/chinachu/recorded` に対応するホスト側マウントパス
+  * `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を直接編集
 
 #### 5. エンコード設定
 デフォルトでは録画終了時に `v:H.264`, `a:copy`, `-tune animation` でエンコードを行い, 元ファイルを `recorded/dump` に退避させつつ置き換える. 必要に応じて `runtime/chinachu/recorded_command` で設定する.
@@ -155,6 +157,7 @@ docker-compose down && docker-compose up -d
 * アップデートはイメージ単位で行うことを想定 (`chinachu updater` は利用できない)
 * エンコード元のTSファイルは `runtime/recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている.
 * エンコードに途中で失敗した場合, コンテナ再起動時に自動的に再試行される
+* 本リポジトリの `stable` タグをベースに, その `docker-compose.yml` のプルするイメージを `stable` タグに書き換えることで安定版に切り替えることが可能
 
 
 ### Bugs / Future Works
