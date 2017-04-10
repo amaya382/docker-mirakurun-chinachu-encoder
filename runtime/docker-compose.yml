@@ -23,6 +23,8 @@ services:
     container_name: chinachu
     ports:
       - "20772:20772"
+    devices:
+      #- /dev/dri/renderD128
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./recorded/:/usr/local/chinachu/recorded/
@@ -31,6 +33,9 @@ services:
       - ./chinachu/data/:/usr/local/chinachu/data/
       - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
       - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro
+    environment:
+      #- "VAAPI_ENABLED=true" # true or false
+      #- "VAAPI_DEVICE=/dev/dri/renderD128" # same as devices
     links:
       - mirakurun
     restart: always

@@ -1,4 +1,5 @@
 #!/bin/sh -eux
+
 exec >> $CHINACHU_HOME/log/operator 2>&1
 
 echo ----- started encoding @`date +%Y/%m/%d/%H:%M:%S` -----
