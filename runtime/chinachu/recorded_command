@@ -1,37 +1,35 @@
 #!/bin/sh -eux
 
-exec >> $CHINACHU_HOME/log/operator 2>&1
+{
+  echo "----- started encoding @`date +%Y/%m/%d/%H:%M:%S` -----"
+  echo $1
+  start=`date +%s`
 
-echo ----- started encoding @`date +%Y/%m/%d/%H:%M:%S` -----
-start=`date +%s`
-echo $1
+  export PATH="$CHINACHU_HOME/usr/bin:$PATH"
 
-export PATH="$CHINACHU_HOME/usr/bin:$PATH"
+  raw=$1
+  tmp=${1%.*}.tmp.mp4
+  out=${1%.*}.mp4
+  audio_map=`ffmpeg -i "$1" 2>&1 | grep 'Audio' | grep -o -e 0:[0-9] | sed -e 's/0:/-map 0:/'`
+  ffmpeg -y -i "$raw" -c:v libx264 -tune animation -c:a copy -map 0:0 $audio_map "$tmp"
 
-raw=$1
-tmp=${1%.*}.tmp.mp4
-out=${1%.*}.mp4
-audio_map=`ffmpeg -i $1 2>&1 | grep 'Audio' | grep -o -e 0:[0-9] | sed -e 's/0:/-map 0:/'`
-ffmpeg -y -i $raw -c:v libx264 -tune animation -c:a copy -map 0:0 $audio_map $tmp
+  mkdir -p $DUMP_SITE
+  mv "$raw" $DUMP_SITE
+  mv "$tmp" "$out"
 
-mkdir -p $DUMP_SITE
-mv $raw $DUMP_SITE
-mv $tmp $out
+  recorded=$CHINACHU_HOME/data/recorded.json
+  lock=$recorded.lock
+  trap "rm -f $lock; exit" 0 1 2 3 15
+  (
+    flock -x 111
+    cat $recorded | jq -c "map(if .recorded == \"$raw\" then .recorded = \"$out\" else . end | .)" > ${recorded}_
+    cat ${recorded}_ > $recorded
+    rm ${recorded}_
+  ) 111>$lock
 
-recorded=$CHINACHU_HOME/data/recorded.json
-lock=$recorded.lock
-trap "rm -f $lock; exit" 0 1 2 3 15
-(
-  flock -x 111
-  cat $recorded | jq -c "map(if .recorded == \"$raw\" then .recorded = \"$out\" else . end | .)" > ${recorded}_
-  cat ${recorded}_ > $recorded
-  rm ${recorded}_
-) 111>$lock
-
-end=`date +%s`
-diff=$(($end - $start))
-echo about $(($diff / 60)) min.
-echo ----- finished encoding @`date +%Y/%m/%d/%H:%M:%S` -----
-echo
+  end=`date +%s`
+  echo "----- finished encoding @`date +%Y/%m/%d/%H:%M:%S`, about $((($end - $start) / 60)) min. -----"
+  echo
+} >> $CHINACHU_HOME/log/operator 2>&1
 
 exit 0
