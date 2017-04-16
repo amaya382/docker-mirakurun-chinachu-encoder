@@ -28,8 +28,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./recorded/:/usr/local/chinachu/recorded/
-      - ./chinachu/config.json:/usr/local/chinachu/config.json
-      - ./chinachu/rules.json:/usr/local/chinachu/rules.json
+      - ./chinachu/conf/:/usr/local/chinachu/conf/
       - ./chinachu/data/:/usr/local/chinachu/data/
       - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
       - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro

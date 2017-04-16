@@ -1,8 +1,8 @@
 #!/bin/sh -eux
 
-[ -s config.json ] || cat turnout/config.json > config.json
-[ -s rules.json ] || cat turnout/rules.json > rules.json
-chown $CHINACHU_UID *.json data/*.json || :
+[ -s config.json ] || cat turnout/config.json > conf/config.json
+[ -s rules.json ] || cat turnout/rules.json > conf/rules.json
+chown $CHINACHU_UID conf/*.json data/*.json || :
 
 VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
 : ${VAAPI_ENABLED:=false}

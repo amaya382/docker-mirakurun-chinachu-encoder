@@ -61,7 +61,7 @@ RUN set -eux && \
     git checkout $CHINACHU_COMMIT && \
     patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch && \
     echo 1 | ./chinachu installer && \
-    mkdir turnout && \
+    mkdir turnout conf && \
     cat config.sample.json | \
       jq ".uid = \"chinachu\" \
         | .mirakurunPath = \"http://mirakurun:40772/\" \
@@ -71,6 +71,8 @@ RUN set -eux && \
         | .recordedCommand = \"$SCRIPT_DIR/recorded_command\"" \
       > turnout/config.json && \
     echo [] > turnout/rules.json && \
+    ln -s conf/config.json config.json && \
+    ln -s conf/rules.json rules.json && \
     rm $SCRIPT_DIR/chinachu-mp4.patch *.sample.json && \
     chown chinachu. -R $CHINACHU_HOME && \
     ./chinachu service operator initscript | sed -e "s/^USER=.*$/USER=chinachu/" > /etc/init.d/chinachu-operator && \
