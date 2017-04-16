@@ -1,3 +1,16 @@
+diff --git a/api/script-recorded-program-file.vm.js b/api/script-recorded-program-file.vm.js
+index 2822efb..db81c62 100644
+--- a/api/script-recorded-program-file.vm.js
++++ b/api/script-recorded-program-file.vm.js
+@@ -14,7 +14,7 @@
+ 			
+ 			if (request.type === 'm2ts') {
+ 				response.setHeader('content-length', fstat.size);
+-				response.setHeader('content-disposition', 'attachment; filename="' + program.id + '.m2ts"');
++				response.setHeader('content-disposition', 'attachment; filename="' + program.id + program.recorded.match(/\.[^\.]+?$/)[0] + '"; filename*=UTF-8\'\'' +  encodeURI(program.recorded.match(/\/[^\/]+?$/)[0].substr(1)));
+ 				response.head(200);
+ 
+ 				fs.createReadStream(program.recorded).pipe(response);
 diff --git a/api/script-recorded-program-preview.vm.js b/api/script-recorded-program-preview.vm.js
 index b6a8200..59856dd 100644
 --- a/api/script-recorded-program-preview.vm.js
