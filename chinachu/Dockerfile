@@ -27,6 +27,7 @@ RUN set -eux && \
       procps \
       ca-certificates \
       jq \
+      shadow \
       \
       libva \
       libva-intel-driver \
@@ -56,7 +57,10 @@ RUN set -eux && \
       libevent-dev \
       nasm \
       bzip2 && \
+    rm /bin/su && \
+    ln -s /bin/busybox /bin/su && \
     adduser -D -u $CHINACHU_UID -h $CHINACHU_HOME chinachu && \
+    addgroup chinachu video && \
     git clone $CHINACHU_REPOSITORY $CHINACHU_HOME && \
     git checkout $CHINACHU_COMMIT && \
     patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch && \

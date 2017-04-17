@@ -33,6 +33,7 @@ services:
       - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
       - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro
     environment:
+      #- "CHINACHU_UID=1000"
       #- "VAAPI_ENABLED=true" # true or false
       #- "VAAPI_DEVICE=/dev/dri/renderD128" # same as devices
     links:

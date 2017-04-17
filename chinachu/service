@@ -4,17 +4,15 @@
 [ -s rules.json ] || cat turnout/rules.json > conf/rules.json
 chown $CHINACHU_UID conf/*.json data/*.json || :
 
-VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
-: ${VAAPI_ENABLED:=false}
+usermod -u $CHINACHU_UID chinachu
 
-if $VAAPI_ENABLED; then
+VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
+if ${VAAPI_ENABLED:=false}; then
   if [ "$VIDEO_GID" = "" ]; then
     echo 'ERROR: VA-API is enabled, but VA-API device was not found'
     exit 1
   else
-    delgroup video || :
-    addgroup -g $VIDEO_GID video
-    addgroup chinachu video
+    groupmod -g $VIDEO_GID video
   fi
 fi
 
