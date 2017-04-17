@@ -5,8 +5,6 @@
   echo $1
   start=`date +%s`
 
-  export PATH="$CHINACHU_HOME/usr/bin:$PATH"
-
   raw=$1
   tmp=${1%.*}.tmp.mp4
   out=${1%.*}.mp4
