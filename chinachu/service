@@ -5,6 +5,7 @@
 chown $CHINACHU_UID conf/*.json data/*.json || :
 
 usermod -u $CHINACHU_UID chinachu
+chown chinachu. -R .
 
 VIDEO_GID=`ls -n $VAAPI_DEVICE | cut -d' ' -f4 || :`
 if ${VAAPI_ENABLED:=false}; then
