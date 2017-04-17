@@ -7,11 +7,11 @@ services:
       - SYS_NICE
       - SYS_ADMIN
     devices:
-      #- /dev/pt3video0
+      #- /dev/pt3video0 # tuners
       #- /dev/pt3video1
       #- /dev/pt3video2
       #- /dev/pt3video3
-      #- /dev/bus/usb/00x/00x
+      #- /dev/bus/usb/00x/00x # card reader
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./mirakurun/etc/:/usr/local/etc/mirakurun/
@@ -22,9 +22,9 @@ services:
     image: amaya382/chinachu:latest
     container_name: chinachu
     ports:
-      - "20772:20772"
+      #- "20772:20772" # WUI port
     devices:
-      #- /dev/dri/renderD128
+      #- /dev/dri/renderD128 # vaapi device (if no, remove `devices` section)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./recorded/:/usr/local/chinachu/recorded/
@@ -33,7 +33,7 @@ services:
       - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
       - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro
     environment:
-      #- "CHINACHU_UID=1000"
+      #- "CHINACHU_UID=1000" # recommend using the same UID as your general account
       #- "VAAPI_ENABLED=true" # true or false
       #- "VAAPI_DEVICE=/dev/dri/renderD128" # same as devices
     links:

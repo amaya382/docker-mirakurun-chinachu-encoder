@@ -4,7 +4,7 @@
 
 Raw size
 > mirakurun 82.6MB -> 69MB  
-> chinachu 641MB -> 471MB
+> chinachu 641MB -> 473MB
 
 
 ## Contents
@@ -77,6 +77,8 @@ docker-compose down
   * `chinachu > volumes > recorded`
 * Chinachu WebUIのポートバインド
   * `chinachu > ports`
+* 実行UID (普段使いアカウントのUIDを推奨)
+  * `chinachu > environment > CHINACHU_UID`
 * [OPT] Chinachu VA-API
   * `chinachu > devices`
   * `chinachu > environment > VAAPI_ENABLED`
@@ -152,12 +154,21 @@ docker-compose down && docker-compose up -d
 ```
 
 
+### Migration
+#### 非Docker環境からの移行
+設定ファイル (chinachuの `rules.json`, `data/*.json`) を `runtime/` にコピーする. `rules.json` は `runtime/conf` 配下に置くこと. `config.json` は本プロジェクト独自の設定があるため, 単純なコピーはせずに初回起動時に自動生成されたものをベースに手動で設定する必要がある.
+
+#### 本プロジェクト内でのバージョンアップ移行
+* `config.json` と `rules.json` を `runtime/conf` 下に移動
+* `docker-compose.yml` 内の設定項目も一部変化している
+
+
 ### Others
 * 各種設定ファイルはホストの `runtime/` 下に永続化される
+* 録画失敗防止の為, 永続化された設定ファイル・録画ファイルは起動時に所有者が `$CHINACHU_UID` に変更される. 2回目以降の起動時に別のUIDにすることも可能
 * アップデートはイメージ単位で行うことを想定 (`chinachu updater` は利用できない)
-* エンコード元のTSファイルは `runtime/recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている.
+* エンコード元のTSファイルは `runtime/recorded/dump` 下に蓄積される. デフォルトでは `storageLowSpaceCommand` によって古くなると削除され, `storageLowSpaceAction` の管理からは外れている
 * エンコードに途中で失敗した場合, コンテナ再起動時に自動的に再試行される
-* 本リポジトリの `stable` タグをベースに, その `docker-compose.yml` のプルするイメージを `stable` タグに書き換えることで安定版に切り替えることが可能
 
 
 ### Bugs / Future Works
