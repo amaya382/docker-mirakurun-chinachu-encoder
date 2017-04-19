@@ -2,8 +2,8 @@ FROM alpine:3.5
 
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
-ARG CHINACHU_REPOSITORY='https://github.com/Chinachu/Chinachu.git'
-ARG CHINACHU_COMMIT='f1a825439f29341da805cbe7a1f01fd81777fad1'
+ARG CHINACHU_REPOSITORY='https://github.com/amaya382/Chinachu.git'
+ARG CHINACHU_COMMIT='49e353f2255dd140f61d847ea8b21a21b2d6f2db'
 ARG FFMPEG_REPOSITORY='https://github.com/FFmpeg/FFmpeg.git'
 ARG FFMPEG_COMMIT='27ebdcf079ed54d294db010e9f50700f75ed5e3d'
 
@@ -15,7 +15,6 @@ ENV DUMP_SITE="$RECORDED_DIR/dump"
 
 WORKDIR $CHINACHU_HOME
 
-COPY chinachu-mp4.patch $SCRIPT_DIR
 COPY service $SCRIPT_DIR
 
 RUN set -eux && \
@@ -63,7 +62,6 @@ RUN set -eux && \
     addgroup chinachu video && \
     git clone $CHINACHU_REPOSITORY $CHINACHU_HOME && \
     git checkout $CHINACHU_COMMIT && \
-    patch -p1 < $SCRIPT_DIR/chinachu-mp4.patch && \
     echo 1 | ./chinachu installer && \
     mkdir turnout conf && \
     cat config.sample.json | \
@@ -77,7 +75,7 @@ RUN set -eux && \
     echo [] > turnout/rules.json && \
     ln -s conf/config.json config.json && \
     ln -s conf/rules.json rules.json && \
-    rm $SCRIPT_DIR/chinachu-mp4.patch *.sample.json && \
+    rm *.sample.json && \
     chown chinachu. -R $CHINACHU_HOME && \
     ./chinachu service operator initscript | sed -e "s/^USER=.*$/USER=chinachu/" > /etc/init.d/chinachu-operator && \
     ./chinachu service wui initscript | sed -e "s/^USER=.*$/USER=chinachu/" > /etc/init.d/chinachu-wui && \
