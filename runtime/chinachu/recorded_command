@@ -9,7 +9,22 @@
   tmp=${1%.*}.tmp.mp4
   out=${1%.*}.mp4
   audio_map=`ffmpeg -i "$1" 2>&1 | grep 'Audio' | grep -o -e 0:[0-9] | sed -e 's/0:/-map 0:/'`
-  ffmpeg -y -i "$raw" -c:v libx264 -tune animation -c:a copy -map 0:0 $audio_map "$tmp"
+  ffmpeg -v 24 -y -i "$raw" \
+    -c:v libx264 \
+    -preset veryfast \
+    -vf yadif \
+    -c:a aac \
+    -map 0:0 $audio_map \
+    "$tmp"
+
+  #ffmpeg -v 24 -y -i "$raw" \
+    #-c:v libx264 \
+    #-preset veryfast \
+    #-tune animation \
+    #-vf yadif \
+    #-c:a aac \
+    #-map 0:0 $audio_map \
+    #"$tmp"
 
   mkdir -p $DUMP_SITE
   mv "$raw" $DUMP_SITE
