@@ -145,7 +145,7 @@ docker exec -it mirakurun mirakurun config channels
   * `storageLowSpaceCommand` は `runtime/chinachu/storage_low_space_command` を, `recordedCommand` は `runtime/chinachu/recorded_command` を直接編集
 
 #### 5. エンコード設定
-デフォルトでは録画終了時に `v: libx264`, `a: aac`, `preset: veryfast`, `vf: yadif` でエンコードを行い, 元ファイルを `recorded/dump` に退避させつつ置き換える. 必要に応じて `runtime/chinachu/recorded_command` で設定する.
+デフォルトでは録画終了時に `v: libx264`, `a: aac`, `preset: veryfast`, `vf: yadif`, `tune: animation (if catecory is 'anime') or film (otherwise)` でエンコードを行い, 元ファイルを `recorded/dump` に退避させつつ置き換える. 必要に応じて `runtime/chinachu/recorded_command` で設定する.
 
 #### 6. 再起動
 一通り初期設定が完了したらコンテナを再起動する
