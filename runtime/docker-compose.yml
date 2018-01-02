@@ -1,7 +1,7 @@
 version: '2'
 services:
   mirakurun:
-    image: amaya382/mirakurun:0.1.1
+    image: amaya382/mirakurun:0.1.2
     container_name: mirakurun
     cap_add:
       - SYS_NICE
@@ -19,7 +19,7 @@ services:
     restart: always
 
   chinachu:
-    image: amaya382/chinachu:0.1.1
+    image: amaya382/chinachu:0.1.2
     container_name: chinachu
     ports:
       #- "20772:20772" # WUI port
