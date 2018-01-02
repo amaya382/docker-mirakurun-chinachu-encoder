@@ -1,17 +1,17 @@
 version: '2'
 services:
   mirakurun:
-    image: amaya382/mirakurun:0.1.2
+    image: amaya382/mirakurun:0.1.3
     container_name: mirakurun
     cap_add:
       - SYS_NICE
       - SYS_ADMIN
     devices:
-      #- /dev/pt3video0 # tuners
-      #- /dev/pt3video1
-      #- /dev/pt3video2
-      #- /dev/pt3video3
-      #- /dev/bus/usb/00x/00x # card reader
+      - /dev/pt3video0 # tuners
+      - /dev/pt3video1
+      - /dev/pt3video2
+      - /dev/pt3video3
+      - /dev/bus/usb/002/003 # card reader
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./mirakurun/etc/:/usr/local/etc/mirakurun/
@@ -19,12 +19,12 @@ services:
     restart: always
 
   chinachu:
-    image: amaya382/chinachu:0.1.2
+    image: amaya382/chinachu:0.1.3
     container_name: chinachu
     ports:
-      #- "20772:20772" # WUI port
+      - "20772:20772" # WUI port
     devices:
-      #- /dev/dri/renderD128 # vaapi device (if no, remove `devices` section)
+      - /dev/dri/renderD128 # vaapi device (if no, remove `devices` section)
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./recorded/:/usr/local/chinachu/recorded/
@@ -33,9 +33,9 @@ services:
       - ./chinachu/recorded_command:/usr/local/bin/recorded_command:ro
       - ./chinachu/storage_low_space_command:/usr/local/bin/storage_low_space_command:ro
     environment:
-      #- "CHINACHU_UID=1000" # recommend using the same UID as your general account
-      #- "VAAPI_ENABLED=true" # true or false
-      #- "VAAPI_DEVICE=/dev/dri/renderD128" # same as devices
-    links:
-      - mirakurun
+      - "CHINACHU_UID=1000" # recommend using the same UID as your general account
+      - "VAAPI_ENABLED=true" # true or false
+      - "VAAPI_DEVICE=/dev/dri/renderD128" # same as devices
+    #links:
+      #- mirakurun
     restart: always
