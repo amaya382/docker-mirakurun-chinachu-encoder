@@ -1,2 +1,6 @@
 runtime/recorded/*
+runtime/chinachu/conf/*.json
+runtime/chinachu/data/*.json
+runtime/mirakurun/db/*.json
+runtime/mirakurun/etc/*.yml
 !.gitkeep
