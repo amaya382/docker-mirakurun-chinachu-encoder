@@ -3,7 +3,7 @@ FROM alpine:3.5
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
 ARG CHINACHU_REPOSITORY='https://github.com/amaya382/Chinachu.git'
-ARG CHINACHU_COMMIT='49e353f2255dd140f61d847ea8b21a21b2d6f2db'
+ARG CHINACHU_COMMIT='da111488d7cc54b5c5fc4d32cae8e91d9c39ffab'
 ARG FFMPEG_REPOSITORY='https://github.com/FFmpeg/FFmpeg.git'
 ARG FFMPEG_COMMIT='27ebdcf079ed54d294db010e9f50700f75ed5e3d'
 
