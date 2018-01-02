@@ -24,7 +24,7 @@ cat config.json_ > config.json
 rm config.json_
 
 find $RECORDED_DIR -name '*.tmp.mp4' -exec \
-  sh -c 'tmp={} && raw=${tmp%.tmp.mp4}.m2ts && recorded_command $raw' & \;
+  sh -c 'tmp={} && raw=${tmp%.tmp.mp4}.m2ts && recorded_command $raw' \; &
 
 rm -f /var/run/chinachu-operator.pid
 rm -f /var/run/chinachu-wui.pid
