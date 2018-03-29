@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM node:8.9-alpine
 
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
@@ -11,7 +11,6 @@ COPY service $SCRIPT_DIR
 RUN set -eux && \
     apk add --no-cache \
       bash \
-      nodejs \
       coreutils \
       libusb \
       pcsc-lite \
@@ -67,7 +66,7 @@ RUN set -eux && \
     make install && \
     \
     apk del --purge .build-deps && \
-    npm cache clean && \
+    npm cache verify && \
     rm -rf /tmp/* ~/.npm
 
 EXPOSE 40772
