@@ -9,12 +9,12 @@ Raw size
 
 ## Contents
 ### Mirakurun
-* Alpine Linux 3.5
+* Alpine Linux 3.11
 * [Mirakurun](https://github.com/kanreisa/Mirakurun)
   * branch: master (v2.2.0)
 
 ### Chinachu
-* Alpine Linux 3.5
+* Alpine Linux 3.7
 * [Chinachu](https://github.com/kanreisa/Chinachu)
   * branch: gamma
 

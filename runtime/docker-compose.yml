@@ -1,7 +1,7 @@
 version: '2'
 services:
   mirakurun:
-    image: amaya382/mirakurun:0.1.3
+    image: amaya382/mirakurun:0.1.4
     container_name: mirakurun
     cap_add:
       - SYS_NICE

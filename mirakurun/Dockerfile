@@ -1,10 +1,11 @@
-FROM node:8.9-alpine
+FROM node:12.16.2-alpine3.11
 
 LABEL maintainer='amaya <mail@sapphire.in.net>'
 
 ENV SCRIPT_DIR='/usr/local/bin'
 ENV TURNOUT='/usr/local/turnout/mirakurun'
 ENV CONF_DIR='/usr/local/etc/mirakurun'
+ENV DOCKER='YES'
 
 COPY service $SCRIPT_DIR
 
@@ -31,7 +32,9 @@ RUN set -eux && \
       eudev-dev \
       libevent-dev \
       pcsc-lite-dev \
-      libusb-dev && \
+      libusb-dev \
+      flex \
+      libtool && \
     \
     npm install pm2 -g && \
     npm install arib-b25-stream-test -g --unsafe && \
@@ -58,17 +61,17 @@ RUN set -eux && \
     \
     # ccid
     cd /tmp && \
-    curl https://alioth.debian.org/frs/download.php/file/4171/ccid-1.4.24.tar.bz2 -o ccid-latest.tar.bz2 && \
-    tar xvf ccid-*.tar.bz2 && \
-    cd ccid-* && \
+    git clone --recursive https://salsa.debian.org/rousseau/CCID.git && \
+    cd CCID && \
+    ./bootstrap && \
     ./configure && \
     make && \
     make install && \
     \
     apk del --purge .build-deps && \
-    npm cache verify && \
     rm -rf /tmp/* ~/.npm
 
+WORKDIR /usr/local/lib/node_modules/mirakurun/
 EXPOSE 40772
 
 CMD ["service"]

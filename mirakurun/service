@@ -7,5 +7,4 @@
 rm -f /run/pcscd/pcscd.comm
 
 pcscd -f --error &
-mirakurun start
-mirakurun log server
+npm start
